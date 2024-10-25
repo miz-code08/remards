@@ -48,7 +48,7 @@ window.onload = function() {
         document.querySelector(`.container`).style.display = "none";
         
         setTimeout(() => {
-            window.location.href = './remember/index.html';
+            window.location.href = 'remember/index.html';
             const shuffledCards = shuffleArray(cards);
             console.log(shuffledCards);
         }, 1000);
