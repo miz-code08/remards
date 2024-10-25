@@ -15,7 +15,7 @@ let calc;
 
 const form = document.querySelector(`.answer`);
 const input = document.querySelector(`.input`);
-const answer = [];
+const answer = Array(52).fill("0");
 
 // lấy mảng shuffledCards từ remember
 const shuffledCards = JSON.parse(localStorage.getItem("shuffledCards"));
@@ -150,7 +150,7 @@ window.onload = function() {
         e.preventDefault(shuffledCards);
         let temp = input.value.toUpperCase();
         if(shuffledCards.includes(temp)) {
-            answer.push(temp);
+            answer[viTri] = temp;
             let link = `../img/52/${temp}.png`;
             listCardImg[viTri].src = link;
             if(viTri < listCardImg.length - 1)
