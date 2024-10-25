@@ -3,12 +3,6 @@ const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 const mode = document.querySelectorAll(`.checkMode`);
 
 const startBtn = document.querySelector(`.startBtn`);
-const cards = [
-    "A1", "11", "21", "31", "41", "51", "61", "71", "81", "91", "J1", "Q1", "K1",
-    "A2", "12", "22", "32", "42", "52", "62", "72", "82", "92", "J2", "Q2", "K2",
-    "A3", "13", "23", "33", "43", "53", "63", "73", "83", "93", "J3", "Q3", "K3",
-    "A4", "14", "24", "34", "44", "54", "64", "74", "84", "94", "J4", "Q4", "K4"
-];
 
 // dark light mode 
 if (darkModeMediaQuery.matches) {
@@ -53,14 +47,4 @@ window.onload = function() {
             console.log(shuffledCards);
         }, 1000);
     })
-
-    // Hàm để trộn các phần tử trong mảng
-    function shuffleArray(array) {
-        let newArray = [...array];
-        for (let i = newArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-        }
-        return newArray;
-    }
 };

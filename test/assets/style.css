@@ -392,3 +392,106 @@ img {
 .next-prev i:active {
     scale: 0.9;
 }
+/* =================================================ANSWER================================================= */
+.answer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    translate: -50% -20%;
+}
+
+.input {
+    width: 100%;
+    height: 50px;
+    line-height: 28px;
+    padding: 0 1rem;
+    padding-left: 2.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    outline: none;
+    background: #a370f0;
+    color: #fff;
+    transition: .3s ease;
+
+    font-size: 2rem;
+}
+
+.input::placeholder {
+    color: #fff;
+}
+
+.input:focus, input:hover {
+    outline: none;
+    border-color: rgba(234,76,137,0.4);
+    background-color: #7c25ff;
+    box-shadow: 0 0 0 4px rgb(234 76 137 / 10%);
+}
+
+.answerBtn {
+    background: #a370f0;
+    color: #fff;
+    padding: 0.35em 3.3em 0.35em 1.2em;
+    font-size: 2rem;
+    font-weight: 500;
+    border-radius: 0.9em;
+    border: none;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 0 1.6em -0.6em #714da6;
+    overflow: hidden;
+
+    position: relative;
+
+    height: 2.8em;
+    cursor: pointer;
+    width: 150px;
+}
+
+.answerBtn .answerIcon {
+    background: #ffeaea;
+    margin-left: 1em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.2em;
+    width: 2.2em;
+    border-radius: 0.7em;
+    box-shadow: 0.1em 0.1em 0.6em 0.2em #7b52b9;
+    right: 0.3em;
+    transition: all 0.3s;
+}
+
+.answerBtn:hover .answerIcon {
+    width: calc(100% - 0.6em);
+}
+
+.icon {
+    width: 1.1em;
+    transition: transform 0.3s;
+    color: #7b52b9;
+}
+
+.answerBtn:hover .icon {
+    transform: translateX(0.1em);
+}
+
+.answerBtn:active .answerIcon {
+    scale: 0.9;
+}
+
+.iconBackground {
+    d: path("M0 0h24v24H0z");
+    fill: none;
+}
+
+.iconArrow {
+    d: path("M16.172 11l-5.364-5.364 1.414-1.414L20 12l-7.778 7.778-1.414-1.414L16.172 13H4v-2z");
+    fill: currentColor;
+}

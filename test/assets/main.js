@@ -2,12 +2,6 @@ const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 const mode = document.querySelectorAll(`.checkMode`);
 
 const submit = document.querySelector(`.startBtn`);
-const cards = [
-    "A1", "11", "21", "31", "41", "51", "61", "71", "81", "91", "J1", "Q1", "K1",
-    "A2", "12", "22", "32", "42", "52", "62", "72", "82", "92", "J2", "Q2", "K2",
-    "A3", "13", "23", "33", "43", "53", "63", "73", "83", "93", "J3", "Q3", "K3",
-    "A4", "14", "24", "34", "44", "54", "64", "74", "84", "94", "J4", "Q4", "K4"
-];
 
 const listCardImg = document.querySelectorAll(`.listCardImg`);
 const arrowNext = document.querySelector(`.fa-angles-right`);
@@ -16,8 +10,15 @@ const next = document.querySelector(`.fa-angle-right`);
 const prev = document.querySelector(`.fa-angle-left`);
 const cardIdx = document.querySelector(`.cardIdx`);
 
-let viTri = 4;
+let viTri = 0;
 let calc;
+
+const form = document.querySelector(`.answer`);
+const input = document.querySelector(`.input`);
+const answer = [];
+
+// lấy mảng shuffledCards từ remember
+const shuffledCards = JSON.parse(localStorage.getItem("shuffledCards"));
 
 // dark light mode 
 if (darkModeMediaQuery.matches) {
@@ -50,23 +51,6 @@ window.onload = function() {
             }
         });
     });
-    
-    const shuffledCards = shuffleArray(cards);
-    listCardImg.forEach((val, idx) => {
-        let link = val.getAttribute('src');
-        link = `../img/52/${shuffledCards[idx]}.png`
-        val.src = link;    
-    });
-
-    // Hàm để trộn các phần tử trong mảng
-    function shuffleArray(array) {
-        let newArray = [...array];
-        for (let i = newArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-        }
-        return newArray;
-    }
 
     // hiệu ứng card
     listCardImg.forEach((val, idx) => {
@@ -160,7 +144,32 @@ window.onload = function() {
             val.style.translate = `-${calc}%`;
         });
     }
-    
+
+    input.focus();
+    form.addEventListener("submit", (e) => {
+        e.preventDefault(shuffledCards);
+        let temp = input.value.toUpperCase();
+        if(shuffledCards.includes(temp)) {
+            answer.push(temp);
+            let link = `../img/52/${temp}.png`;
+            listCardImg[viTri].src = link;
+            if(viTri < listCardImg.length - 1)
+                viTri++;
+            calcTranslate();
+            removeActive();
+            addActive()        
+            cardTranslate();
+            input.placeholder = "Nhập đáp án"
+            input.style.background = "#a370f0";
+        }
+        else {
+            input.placeholder = "Nhập sai kí hiệu"
+            input.style.background = "red";
+        }
+        input.value = "";
+        input.focus();
+    }); 
+
     // ngăn sự thoát khỏi trang khi đang nhớ
     window.addEventListener('beforeunload', (e) => {
         e.preventDefault();
@@ -168,9 +177,7 @@ window.onload = function() {
     });
 
     submit.addEventListener("click", () => {
-        window.location.assign('../test/index.html');
-        // tải hàm shuffledCards lên
-        localStorage.setItem("shuffledCards", JSON.stringify(shuffledCards));
-        console.log(shuffledCards);
-    });    
+        // tải hàm answer lên
+        localStorage.setItem("answer", JSON.stringify(answer));
+    });
 };
