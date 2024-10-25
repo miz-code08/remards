@@ -54,7 +54,7 @@ window.onload = function() {
     const shuffledCards = shuffleArray(cards);
     listCardImg.forEach((val, idx) => {
         let link = val.getAttribute('src');
-        link = `../img/52 lá bài/${cards[idx]}.png`
+        link = `../img/52card/${cards[idx]}.png`
         val.src = link;
         console.log(link);       
     });
