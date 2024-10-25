@@ -161,7 +161,7 @@ window.onload = function() {
             val.style.translate = `-${calc}%`;
         });
     }
-
+    
     // ngăn sự thoát khỏi trang khi đang nhớ
     let isFormDirty = true;
 

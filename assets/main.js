@@ -1,4 +1,3 @@
-// const mayBay = document.querySelector(`.maybay`);
 const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 const mode = document.querySelectorAll(`.checkMode`);
@@ -27,11 +26,6 @@ window.onload = function() {
     document.querySelector(".loading").style.display = "none";
     document.querySelector(`.container`).style.display = "block";
 
-    // cuộn tới đầu trang
-    // mayBay.addEventListener("click", () => {
-    //     window.scrollTo(0, 0);
-    // });
-
     // dark light mode
     mode.forEach((val, idx) => {
         val.addEventListener("change", () => {
@@ -54,7 +48,7 @@ window.onload = function() {
         document.querySelector(`.container`).style.display = "none";
         
         setTimeout(() => {
-            window.location.href = '/remember/index.html';
+            window.location.href = './remember/index.html';
             const shuffledCards = shuffleArray(cards);
             console.log(shuffledCards);
         }, 1000);
