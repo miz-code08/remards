@@ -10,15 +10,25 @@ const cards = [
 ];
 
 const listCardImg = document.querySelectorAll(`.listCardImg`);
+const listCardImg1 = document.querySelectorAll(`.listCardImg1Img`);
 const arrowNext = document.querySelector(`.fa-angles-right`);
 const arrowPrev = document.querySelector(`.fa-angles-left`);
 const next = document.querySelector(`.fa-angle-right`);
 const prev = document.querySelector(`.fa-angle-left`);
 const cardIdx = document.querySelector(`.cardIdx`);
+const score = document.querySelector(`.score`);
+const time = document.querySelector(`.time`);
 
 let viTri = 4;
 let calc;
-const startTime = new Date();
+let scoreCnt = 0
+let timeCnt;
+
+// lấy mảng từ local
+const shuffledCards = JSON.parse(localStorage.getItem("shuffledCards"));
+const answer = JSON.parse(localStorage.getItem("answer"));
+const endTime = JSON.parse(localStorage.getItem("endTime"));
+// console.log(shuffledCards, answer);
 
 // dark light mode 
 if (darkModeMediaQuery.matches) {
@@ -52,25 +62,31 @@ window.onload = function() {
         });
     });
     
-    const shuffledCards = shuffleArray(cards);
+    // thay hình ? thành bài
     listCardImg.forEach((val, idx) => {
         let link = val.getAttribute('src');
         link = `../img/52/${shuffledCards[idx]}.png`
         val.src = link;    
     });
 
-    // Hàm để trộn các phần tử trong mảng
-    function shuffleArray(array) {
-        let newArray = [...array];
-        for (let i = newArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-        }
-        return newArray;
-    }
+    answer.forEach((val, idx) => {
+        let link = listCardImg1[idx].getAttribute('src');
+        link = `../img/52/${val}.png`
+        listCardImg1[idx].src = link; 
+    });
 
     // hiệu ứng card
     listCardImg.forEach((val, idx) => {
+        val.addEventListener("click", () => {
+            viTri = idx;
+            calcTranslate();
+            removeActive();
+            addActive()        
+            cardTranslate();
+        });        
+    });
+
+    listCardImg1.forEach((val, idx) => {
         val.addEventListener("click", () => {
             viTri = idx;
             calcTranslate();
@@ -138,6 +154,11 @@ window.onload = function() {
             val.classList.remove("active1");
             val.classList.remove("active2");
         });
+
+        listCardImg1.forEach((val, idx) => {
+            val.classList.remove("active1");
+            val.classList.remove("active2");
+        });
     }
 
     function addActive() {
@@ -145,9 +166,14 @@ window.onload = function() {
             listCardImg[viTri].classList.add("active1");
             listCardImg[viTri-1].classList.add("active2");
             listCardImg[viTri+1].classList.add("active2");
+
+            listCardImg1[viTri].classList.add("active1");
+            listCardImg1[viTri-1].classList.add("active2");
+            listCardImg1[viTri+1].classList.add("active2");
         }        
         else {
             listCardImg[viTri].classList.add("active2");
+            listCardImg1[viTri].classList.add("active2");
         }
     }
 
@@ -160,29 +186,23 @@ window.onload = function() {
         listCardImg.forEach(val => {
             val.style.translate = `-${calc}%`;
         });
-    }
-    
-    // ngăn sự thoát khỏi trang khi đang nhớ
-    window.addEventListener('beforeunload', (e) => {
-        e.preventDefault();
-        e.returnValue = '';
+
+        listCardImg1.forEach(val => {
+            val.style.translate = `-${calc}%`;
+        });
+    }  
+
+    // check kết quả
+    answer.forEach((val, idx) => {
+        if(val === shuffledCards[idx]) {
+            listCardImg1[idx].classList.add("green");
+            scoreCnt++;
+        }
+        else {
+            listCardImg1[idx].classList.add("red");
+        }
     });
 
-    submit.addEventListener("click", () => {
-        window.location.assign('../test/index.html');
-
-        // tính toán thời gian làm bài
-        const currentTime = new Date();
-        const timeDiff = currentTime - startTime;
-        const hours = String(Math.floor(timeDiff / 3600000)).padStart(2, '0');
-        const minutes = String(Math.floor((timeDiff % 3600000) / 60000)).padStart(2, '0');
-        const seconds = String(Math.floor((timeDiff % 60000) / 1000)).padStart(2, '0');
-        const endTime = `${hours}:${minutes}:${seconds}`;
-        console.log(endTime);
-
-        // tải hàm shuffledCards lên
-        localStorage.setItem("shuffledCards", JSON.stringify(shuffledCards));
-        localStorage.setItem("endTime", JSON.stringify(endTime));
-    });    
-
+    score.textContent = `${scoreCnt}/52`;
+    time.textContent = endTime;
 };

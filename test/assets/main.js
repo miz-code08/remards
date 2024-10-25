@@ -177,6 +177,7 @@ window.onload = function() {
     });
 
     submit.addEventListener("click", () => {
+        window.location.assign('../answer/index.html');
         // tải hàm answer lên
         localStorage.setItem("answer", JSON.stringify(answer));
     });
