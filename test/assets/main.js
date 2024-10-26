@@ -52,123 +52,85 @@ window.onload = function() {
         });
     });
 
-    // hiệu ứng card
+    // ======================================================CARD======================================================
+    // 
+    const updateCard = (newIndex) => {
+        viTri = newIndex;
+        calcTranslate();
+        removeActive();
+        addActive();
+        cardTranslate();
+    };
+    
     listCardImg.forEach((val, idx) => {
-        val.addEventListener("click", () => {
-            viTri = idx;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        });        
+        val.addEventListener("click", () => updateCard(idx));
     });
-
+    
     prev.addEventListener("click", () => {
-        if(viTri > 0)
-            viTri--;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
+        if (viTri > 0) 
+            updateCard(--viTri);
     });
-
+    
     next.addEventListener("click", () => {
-        if(viTri < listCardImg.length - 1)
-            viTri++;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
+        if (viTri < listCardImg.length - 1) 
+            updateCard(++viTri);
     });
-
-    arrowPrev.addEventListener("click", () => {
-        viTri = 0;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
+    
+    arrowPrev.addEventListener("click", () => updateCard(0));
+    arrowNext.addEventListener("click", () => updateCard(listCardImg.length - 1));
+    
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft' && viTri > 0)
+            updateCard(--viTri);
+        else if (event.key === 'ArrowRight' && viTri < listCardImg.length - 1)
+            updateCard(++viTri);
     });
-
-    arrowNext.addEventListener("click", () => {
-        viTri = listCardImg.length - 1;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
-    });
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowLeft') {
-            if(viTri > 0)
-                viTri--;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        } 
-        else if (event.key === 'ArrowRight') {
-            if(viTri < listCardImg.length - 1)
-                viTri++;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        }
-    })
-
-    function removeActive() {
-        listCardImg.forEach((val, idx) => {
-            val.classList.remove("active1");
-            val.classList.remove("active2");
+    
+    const removeActive = () => {
+        listCardImg.forEach(val => {
+            val.classList.remove("active1", "active2");
         });
-    }
-
-    function addActive() {
-        if(viTri > 3 && viTri < listCardImg.length - 4) {
-            listCardImg[viTri].classList.add("active1");
-            listCardImg[viTri-1].classList.add("active2");
-            listCardImg[viTri+1].classList.add("active2");
-        }        
-        else {
-            listCardImg[viTri].classList.add("active2");
-        }
-    }
-
-    function calcTranslate() {
-        calc = (viTri - 4 < 0) ? 0 : (viTri >= listCardImg.length - 4) ? (listCardImg.length - 9) * 100 : (viTri - 4) * 100;
-        cardIdx.textContent = `${viTri+1}/52`;
-    }
-
-    function cardTranslate() {
+    };
+    
+    const addActive = () => {
+        listCardImg[viTri].classList.add("active1");
+        if (viTri > 0) 
+            listCardImg[viTri - 1].classList.add("active2");
+        if (viTri < listCardImg.length - 1) 
+            listCardImg[viTri + 1].classList.add("active2");
+    };
+    
+    const calcTranslate = () => {
+        calc = Math.max(0, Math.min((viTri - 4) * 100, (listCardImg.length - 9) * 100));
+        cardIdx.textContent = `${viTri + 1}/52`;
+    };
+    
+    const cardTranslate = () => {
         listCardImg.forEach(val => {
             val.style.translate = `-${calc}%`;
         });
-    }
-    setInterval(() => {
-        input.focus();
-    }, 100);     
+    };
+
+    // ======================================================INPUT======================================================
+    setInterval(() => input.focus(), 100);
+    
     form.addEventListener("submit", (e) => {
-        e.preventDefault(shuffledCards);
-        let temp = input.value.toUpperCase();
-        if(shuffledCards.includes(temp)) {
+        e.preventDefault();
+        const temp = input.value.toUpperCase();
+        if (shuffledCards.includes(temp)) {
             answer[viTri] = temp;
-            let link = `../img/52/${temp}.png`;
-            listCardImg[viTri].src = link;
-            if(viTri < listCardImg.length - 1)
-                viTri++;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-            input.placeholder = "Nhập đáp án"
+            listCardImg[viTri].src = `../img/52/${temp}.png`;
+            if (viTri < listCardImg.length - 1)
+                updateCard(++viTri);
+            input.placeholder = "Nhập đáp án";
             input.style.background = "#a370f0";
-        }
+        } 
         else {
-            input.placeholder = "Nhập sai kí hiệu"
+            input.placeholder = "Nhập sai kí hiệu";
             input.style.background = "red";
         }
         input.value = "";
-    }); 
+    });
 
     // ngăn sự thoát khỏi trang khi đang nhớ
     window.addEventListener('beforeunload', (e) => {

@@ -53,15 +53,15 @@ window.onload = function() {
     });
     
     const shuffledCards = shuffleArray(cards);
+
+    // cập nhật ảnh thẻ bài
     listCardImg.forEach((val, idx) => {
-        let link = val.getAttribute('src');
-        link = `../img/52/${shuffledCards[idx]}.png`
-        val.src = link;    
+        val.src = `../img/52/${shuffledCards[idx]}.png`;
     });
 
-    // Hàm để trộn các phần tử trong mảng
+    // Hàm trộn các phần tử trong mảng
     function shuffleArray(array) {
-        let newArray = [...array];
+        const newArray = [...array];
         for (let i = newArray.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
@@ -69,120 +69,88 @@ window.onload = function() {
         return newArray;
     }
 
-    // hiệu ứng card
-    listCardImg.forEach((val, idx) => {
-        val.addEventListener("click", () => {
-            viTri = idx;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        });        
-    });
-
-    prev.addEventListener("click", () => {
-        if(viTri > 0)
-            viTri--;
+    // Hàm cập nhật vị trí thẻ khi được nhấn
+    const updateCard = (newIndex) => {
+        viTri = newIndex;
         calcTranslate();
         removeActive();
-        addActive()        
+        addActive();
         cardTranslate();
+    };
+
+    // Gán sự kiện click cho từng thẻ
+    listCardImg.forEach((val, idx) => {
+        val.addEventListener("click", () => updateCard(idx));
+    });
+
+    // Các sự kiện cho nút trước/sau và mũi tên
+    prev.addEventListener("click", () => {
+        if (viTri > 0)
+            updateCard(--viTri);
     });
 
     next.addEventListener("click", () => {
-        if(viTri < listCardImg.length - 1)
-            viTri++;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
+        if (viTri < listCardImg.length - 1)
+            updateCard(++viTri);
     });
 
-    arrowPrev.addEventListener("click", () => {
-        viTri = 0;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
+    arrowPrev.addEventListener("click", () => updateCard(0));
+    arrowNext.addEventListener("click", () => updateCard(listCardImg.length - 1));
+
+    // Thêm sự kiện cho phím mũi tên
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft' && viTri > 0) 
+            updateCard(--viTri);
+        else if (event.key === 'ArrowRight' && viTri < listCardImg.length - 1) 
+            updateCard(++viTri);
     });
 
-    arrowNext.addEventListener("click", () => {
-        viTri = listCardImg.length - 1;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
-    });
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowLeft') {
-            if(viTri > 0)
-                viTri--;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        } 
-        else if (event.key === 'ArrowRight') {
-            if(viTri < listCardImg.length - 1)
-                viTri++;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        }
-    })
-
-    function removeActive() {
-        listCardImg.forEach((val, idx) => {
-            val.classList.remove("active1");
-            val.classList.remove("active2");
+    // Hàm xóa lớp hoạt động
+    const removeActive = () => {
+        listCardImg.forEach(val => {
+            val.classList.remove("active1", "active2");
         });
-    }
+    };
 
-    function addActive() {
-        if(viTri > 3 && viTri < listCardImg.length - 4) {
-            listCardImg[viTri].classList.add("active1");
-            listCardImg[viTri-1].classList.add("active2");
-            listCardImg[viTri+1].classList.add("active2");
-        }        
-        else {
-            listCardImg[viTri].classList.add("active2");
-        }
-    }
+    // Hàm thêm lớp hoạt động
+    const addActive = () => {
+        listCardImg[viTri].classList.add("active1");
+        if (viTri > 0) 
+            listCardImg[viTri - 1].classList.add("active2");
+        if (viTri < listCardImg.length - 1) 
+            listCardImg[viTri + 1].classList.add("active2");
+    };
 
-    function calcTranslate() {
-        calc = (viTri - 4 < 0) ? 0 : (viTri >= listCardImg.length - 4) ? (listCardImg.length - 9) * 100 : (viTri - 4) * 100;
-        cardIdx.textContent = `${viTri+1}/52`;
-    }
+    // Tính toán vị trí dịch chuyển
+    const calcTranslate = () => {
+        calc = Math.max(0, Math.min((viTri - 4) * 100, (listCardImg.length - 9) * 100));
+        cardIdx.textContent = `${viTri + 1}/52`;
+    };
 
-    function cardTranslate() {
+    // Dịch chuyển thẻ
+    const cardTranslate = () => {
         listCardImg.forEach(val => {
             val.style.translate = `-${calc}%`;
         });
-    }
-    
-    // ngăn sự thoát khỏi trang khi đang nhớ
+    };
+
+    // Ngăn sự thoát khỏi trang khi đang nhớ
     window.addEventListener('beforeunload', (e) => {
         e.preventDefault();
         e.returnValue = '';
     });
 
+    // Xử lý sự kiện submit
     submit.addEventListener("click", () => {
-        window.location.assign('../test/index.html');
-
-        // tính toán thời gian làm bài
         const currentTime = new Date();
         const timeDiff = currentTime - startTime;
-        const hours = String(Math.floor(timeDiff / 3600000)).padStart(2, '0');
-        const minutes = String(Math.floor((timeDiff % 3600000) / 60000)).padStart(2, '0');
-        const seconds = String(Math.floor((timeDiff % 60000) / 1000)).padStart(2, '0');
-        const endTime = `${hours}:${minutes}:${seconds}`;
-        console.log(endTime);
-
-        // tải hàm shuffledCards lên
+        // Tính toán thời gian làm bài
+        const endTime = new Date(timeDiff).toISOString().substr(11, 8);
+        // Tải hàm shuffledCards lên
         localStorage.setItem("shuffledCards", JSON.stringify(shuffledCards));
         localStorage.setItem("endTime", JSON.stringify(endTime));
-    });    
 
+        // Chuyển hướng
+        window.location.assign('../test/index.html');
+    });
 };

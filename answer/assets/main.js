@@ -31,7 +31,7 @@ const endTime = JSON.parse(localStorage.getItem("endTime"));
 // console.log(shuffledCards, answer);
 
 // dark light mode 
-if (darkModeMediaQuery.matches) {
+if(darkModeMediaQuery.matches) {
     mode.forEach(val => {
         val.checked = true;
         mode.forEach(e => { e.checked = true; });
@@ -62,147 +62,105 @@ window.onload = function() {
         });
     });
     
-    // thay hình ? thành bài
+    // Cập nhật hình ảnh thẻ cho listCardImg
     listCardImg.forEach((val, idx) => {
-        let link = val.getAttribute('src');
-        link = `../img/52/${shuffledCards[idx]}.png`
-        val.src = link;    
+        val.src = `../img/52/${shuffledCards[idx]}.png`;
     });
 
+    // Cập nhật hình ảnh thẻ cho listCardImg1 từ answer
     answer.forEach((val, idx) => {
-        let link = listCardImg1[idx].getAttribute('src');
-        link = `../img/52/${val}.png`
-        listCardImg1[idx].src = link; 
+        listCardImg1[idx].src = `../img/52/${val}.png`;
     });
 
-    // hiệu ứng card
+    // Hàm cập nhật hiệu ứng cho thẻ
+    const updateCard = (newIndex) => {
+        viTri = newIndex;
+        calcTranslate();
+        removeActive();
+        addActive();
+        cardTranslate();
+    };
+
+    // Gán sự kiện click cho listCardImg
     listCardImg.forEach((val, idx) => {
-        val.addEventListener("click", () => {
-            viTri = idx;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        });        
+        val.addEventListener("click", () => updateCard(idx));
     });
 
+    // Gán sự kiện click cho listCardImg1
     listCardImg1.forEach((val, idx) => {
-        val.addEventListener("click", () => {
-            viTri = idx;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        });        
+        val.addEventListener("click", () => updateCard(idx));
     });
 
-    prev.addEventListener("click", () => {
-        if(viTri > 0)
-            viTri--;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
+    // Các sự kiện cho nút trước/sau và mũi tên
+    const navigate = (direction) => {
+        if(direction === 'prev' && viTri > 0)
+            updateCard(--viTri);
+        else if(direction === 'next' && viTri < listCardImg.length - 1)
+            updateCard(++viTri);
+    };
+
+    prev.addEventListener("click", () => navigate('prev'));
+    next.addEventListener("click", () => navigate('next'));
+    arrowPrev.addEventListener("click", () => updateCard(0));
+    arrowNext.addEventListener("click", () => updateCard(listCardImg.length - 1));
+
+    // Thêm sự kiện cho phím mũi tên
+    document.addEventListener('keydown', (event) => {
+        if(event.key === 'ArrowLeft')
+            navigate('prev');
+        else if(event.key === 'ArrowRight')
+            navigate('next');
     });
 
-    next.addEventListener("click", () => {
-        if(viTri < listCardImg.length - 1)
-            viTri++;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
-    });
-
-    arrowPrev.addEventListener("click", () => {
-        viTri = 0;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
-    });
-
-    arrowNext.addEventListener("click", () => {
-        viTri = listCardImg.length - 1;
-        calcTranslate();
-        removeActive();
-        addActive()        
-        cardTranslate();
-    });
-
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'ArrowLeft') {
-            if(viTri > 0)
-                viTri--;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        } 
-        else if (event.key === 'ArrowRight') {
-            if(viTri < listCardImg.length - 1)
-                viTri++;
-            calcTranslate();
-            removeActive();
-            addActive()        
-            cardTranslate();
-        }
-    })
-
-    function removeActive() {
-        listCardImg.forEach((val, idx) => {
-            val.classList.remove("active1");
-            val.classList.remove("active2");
+    // Hàm xóa lớp hoạt động
+    const removeActive = () => {
+        [...listCardImg, ...listCardImg1].forEach(val => {
+            val.classList.remove("active1", "active2");
         });
+    };
 
-        listCardImg1.forEach((val, idx) => {
-            val.classList.remove("active1");
-            val.classList.remove("active2");
-        });
-    }
-
-    function addActive() {
+    // Hàm thêm lớp hoạt động
+    const addActive = () => {
         if(viTri > 3 && viTri < listCardImg.length - 4) {
-            listCardImg[viTri].classList.add("active1");
-            listCardImg[viTri-1].classList.add("active2");
-            listCardImg[viTri+1].classList.add("active2");
-
-            listCardImg1[viTri].classList.add("active1");
-            listCardImg1[viTri-1].classList.add("active2");
-            listCardImg1[viTri+1].classList.add("active2");
-        }        
-        else {
-            listCardImg[viTri].classList.add("active2");
-            listCardImg1[viTri].classList.add("active2");
+            [listCardImg, listCardImg1].forEach(imgList => {
+                imgList[viTri].classList.add("active1");
+                if(viTri > 0)
+                    imgList[viTri - 1].classList.add("active2");
+                if(viTri < imgList.length - 1)
+                    imgList[viTri + 1].classList.add("active2");
+            });
+        } else {
+            [listCardImg, listCardImg1].forEach(imgList => {
+                imgList[viTri].classList.add("active2");
+            });
         }
-    }
+    };
 
-    function calcTranslate() {
-        calc = (viTri - 4 < 0) ? 0 : (viTri >= listCardImg.length - 4) ? (listCardImg.length - 9) * 100 : (viTri - 4) * 100;
-        cardIdx.textContent = `${viTri+1}/52`;
-    }
+    // Tính toán vị trí dịch chuyển
+    const calcTranslate = () => {
+        calc = Math.max(0, Math.min((viTri - 4) * 100, (listCardImg.length - 9) * 100));
+        cardIdx.textContent = `${viTri + 1}/52`;
+    };
 
-    function cardTranslate() {
-        listCardImg.forEach(val => {
+    // Dịch chuyển thẻ
+    const cardTranslate = () => {
+        [...listCardImg, ...listCardImg1].forEach(val => {
             val.style.translate = `-${calc}%`;
         });
+    };
 
-        listCardImg1.forEach(val => {
-            val.style.translate = `-${calc}%`;
-        });
-    }  
-
-    // check kết quả
+    // Kiểm tra kết quả
     answer.forEach((val, idx) => {
         if(val === shuffledCards[idx]) {
             listCardImg1[idx].classList.add("green");
             scoreCnt++;
-        }
+        } 
         else {
             listCardImg1[idx].classList.add("red");
         }
     });
 
+    // Cập nhật điểm số và thời gian
     score.textContent = `${scoreCnt}/52`;
     time.textContent = endTime;
 };
