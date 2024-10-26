@@ -326,7 +326,13 @@ img {
 }
 
 .listCardImg:hover {
-    z-index: 4;
+    box-shadow: 0px 0px 5px 5px rgba(0,0,0,1);
+    -webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 5px 5px rgba(0,0,0,1);
+}
+
+.listCardImg:active {
+    box-shadow: none;
 }
 
 .active1 {

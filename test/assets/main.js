@@ -144,8 +144,9 @@ window.onload = function() {
             val.style.translate = `-${calc}%`;
         });
     }
-
-    input.focus();
+    setInterval(() => {
+        input.focus();
+    }, 100);     
     form.addEventListener("submit", (e) => {
         e.preventDefault(shuffledCards);
         let temp = input.value.toUpperCase();
@@ -167,7 +168,6 @@ window.onload = function() {
             input.style.background = "red";
         }
         input.value = "";
-        input.focus();
     }); 
 
     // ngăn sự thoát khỏi trang khi đang nhớ

@@ -272,9 +272,16 @@ img {
     
 }
 
-.listCardImg:hover ,
-.listCardImg1Img:hover {
-    z-index: 4;
+.listCardImg:hover,
+.listCard1Img:hover {
+    box-shadow: 0px 0px 5px 5px rgba(0,0,0,1);
+    -webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 5px 5px rgba(0,0,0,1);
+}
+
+.listCardImg:active,
+.listCard1Img:active {
+    box-shadow: none;
 }
 
 .red {
