@@ -1,6 +1,9 @@
+// Kiểm tra chế độ màu tối của người dùng
 const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
 const mode = document.querySelectorAll(`.checkMode`);
 
+// Bản đồ ký tự thành số
 const charToNumMap = {
     's': '0', 'x': '0', 
     't': '1', 
@@ -13,42 +16,41 @@ const charToNumMap = {
     'v': '8', 
     'b': '9', 'p': '9'
 };
-// Biến a và b để xác định phạm vi số ngẫu nhiên
-let a = 0;
-let b = 19;
-let randomNumber;
-let score = 0;
-let range = b - a + 1;
+
+// giá trị đầu cuối
+let a = 0; 
+let b = 19; 
+let randomNumber; // Số ngẫu nhiên
+let score = 0; // Điểm số
+let range = b - a + 1; // Phạm vi
 
 const numberA = document.querySelector(`.numberA`);
 const numberB = document.querySelector(`.numberB`);
 const changeBtn = document.querySelector(`.changeBtn`);
 
-// dark light mode 
+// Áp dụng chế độ tối nếu được kích hoạt
 if(darkModeMediaQuery.matches) {
     mode.forEach(val => {
         val.checked = true;
-        mode.forEach(e => { e.checked = true; });
         document.body.style.background = 'var(--dark-bg)';
         document.body.style.color = 'var(--dark-text)';
     });
 }
 
-// nếu load tất cả xong
+// Khi trang được tải
 window.onload = function() {
-    // ẩn loading
-    document.querySelector(".loading").style.display = "none";
-    document.querySelector(`.container`).style.display = "block";
+    document.querySelector(".loading").style.display = "none"; // Ẩn loading
+    document.querySelector(`.container`).style.display = "block"; // Hiện nội dung
 
-    // dark light mode
-    mode.forEach((val, idx) => {
+    // Lắng nghe sự thay đổi chế độ màu
+    mode.forEach(val => {
         val.addEventListener("change", () => {
             if(val.checked) {
                 mode.forEach(e => { e.checked = true; });
                 document.body.style.background = 'var(--dark-bg)';
                 document.body.style.color = 'var(--dark-text)';
-            }
-            else{
+            } 
+            else {
                 mode.forEach(e => { e.checked = false; });
                 document.body.style.background = 'var(--light-bg)';
                 document.body.style.color = 'var(--light-text)';
@@ -56,33 +58,40 @@ window.onload = function() {
         });
     });
 
-    changeBtn.addEventListener("click", () => {
-        a = parseInt(Math.min(numberA.value, numberB.value), 10);
-        b = parseInt(Math.max(numberA.value, numberB.value), 10);
-        range = b - a + 1;
-        generateRandomNumber();
-    });
+    // Sự kiện thay đổi khoảng a và b
+    changeBtn.addEventListener("click", updateRange);
 
-    numberB.addEventListener("keyup", function(event) {
-        if(event.key === "Enter") {
-            a = parseInt(Math.min(numberA.value, numberB.value), 10);
-            b = parseInt(Math.max(numberA.value, numberB.value), 10);
-            range = b - a + 1;
-            generateRandomNumber();
+    numberB.addEventListener("keydown", function(e) {
+        if(e.key === "Enter") {
+            updateRange();
         }
     });
 
-    generateRandomNumber();
-    function generateRandomNumber() {
-        randomNumber = ("0" + (Math.floor(Math.random() * range) + a)).slice(-2);
-        document.getElementById("random-number").innerText = "Số ngẫu nhiên: " + randomNumber;
+    // Hàm để thay đổi khoảng a và b
+    function updateRange() {
+        a = parseInt(Math.min(numberA.value, numberB.value), 10);
+        b = parseInt(Math.max(numberA.value, numberB.value), 10);
+        numberA.value = "";
+        numberB.value = "";
+        range = b - a + 1;
+        generateRandomNumber();
     }
     
+    // Lắng nghe sự kiện nhấn phím cho input người dùng
+    document.getElementById("user-input").addEventListener("keydown", function(e) {
+        if(e.key === "Enter") {
+            checkResult(); // Kiểm tra kết quả
+        }
+    });
+
+    // Hàm kiểm tra kết quả nhập từ người dùng
     function checkResult() {
         const userInputElem = document.getElementById("user-input");
         const userInput = userInputElem.value.toLowerCase().trim();
         const words = userInput.split(/\s+/);
         const convertedChars = words.map(word => charToNumMap[word.charAt(0)] || '').join('');
+        
+        // Kiểm tra điều kiện trúng thưởng
         if(randomNumber.startsWith("0")) {
             const secondDigit = randomNumber.charAt(1);
             if(convertedChars.charAt(0) === secondDigit) {
@@ -96,13 +105,14 @@ window.onload = function() {
                 document.getElementById("score").innerText = score;
             }
         }
-        userInputElem.value = "";
-        generateRandomNumber();
+        userInputElem.value = ""; // Xóa input
+        generateRandomNumber(); // Tạo số ngẫu nhiên mới
     }
-    
-    document.getElementById("user-input").addEventListener("keyup", function(event) {
-        if(event.key === "Enter") {
-            checkResult();
-        }
-    });
+
+    // Hàm tạo số ngẫu nhiên
+    generateRandomNumber(); // Tạo số ngẫu nhiên lần đầu    
+    function generateRandomNumber() {
+        randomNumber = ("0" + (Math.floor(Math.random() * range) + a)).slice(-2);
+        document.getElementById("random-number").innerText = "Số ngẫu nhiên: " + randomNumber;
+    }
 };

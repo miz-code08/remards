@@ -52,16 +52,7 @@ window.onload = function() {
         });
     });
 
-    // ======================================================CARD======================================================
-    // 
-    const updateCard = (newIndex) => {
-        viTri = newIndex;
-        calcTranslate();
-        removeActive();
-        addActive();
-        cardTranslate();
-    };
-    
+    // ======================================================CARD======================================================    
     listCardImg.forEach((val, idx) => {
         val.addEventListener("click", () => updateCard(idx));
     });
@@ -84,15 +75,22 @@ window.onload = function() {
             updateCard(--viTri);
         else if (event.key === 'ArrowRight' && viTri < listCardImg.length - 1)
             updateCard(++viTri);
-    });
-    
-    const removeActive = () => {
+    });    
+    function updateCard(newIndex) {
+        viTri = newIndex;
+        calcTranslate();
+        removeActive();
+        addActive();
+        cardTranslate();
+    };
+
+    function removeActive() {
         listCardImg.forEach(val => {
             val.classList.remove("active1", "active2");
         });
     };
     
-    const addActive = () => {
+    function addActive() {
         listCardImg[viTri].classList.add("active1");
         if (viTri > 0) 
             listCardImg[viTri - 1].classList.add("active2");
@@ -100,17 +98,16 @@ window.onload = function() {
             listCardImg[viTri + 1].classList.add("active2");
     };
     
-    const calcTranslate = () => {
+    function calcTranslate() {
         calc = Math.max(0, Math.min((viTri - 4) * 100, (listCardImg.length - 9) * 100));
         cardIdx.textContent = `${viTri + 1}/52`;
     };
     
-    const cardTranslate = () => {
+    function cardTranslate() {
         listCardImg.forEach(val => {
             val.style.translate = `-${calc}%`;
         });
     };
-
     // ======================================================INPUT======================================================
     setInterval(() => input.focus(), 100);
     

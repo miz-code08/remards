@@ -73,7 +73,7 @@ window.onload = function() {
     });
 
     // Hàm cập nhật hiệu ứng cho thẻ
-    const updateCard = (newIndex) => {
+    function updateCard(newIndex) {
         viTri = newIndex;
         calcTranslate();
         removeActive();
@@ -92,7 +92,7 @@ window.onload = function() {
     });
 
     // Các sự kiện cho nút trước/sau và mũi tên
-    const navigate = (direction) => {
+    function navigate(direction) {
         if(direction === 'prev' && viTri > 0)
             updateCard(--viTri);
         else if(direction === 'next' && viTri < listCardImg.length - 1)
@@ -113,14 +113,14 @@ window.onload = function() {
     });
 
     // Hàm xóa lớp hoạt động
-    const removeActive = () => {
+    function removeActive() {
         [...listCardImg, ...listCardImg1].forEach(val => {
             val.classList.remove("active1", "active2");
         });
     };
 
     // Hàm thêm lớp hoạt động
-    const addActive = () => {
+    function addActive() {
         if(viTri > 3 && viTri < listCardImg.length - 4) {
             [listCardImg, listCardImg1].forEach(imgList => {
                 imgList[viTri].classList.add("active1");
@@ -137,13 +137,13 @@ window.onload = function() {
     };
 
     // Tính toán vị trí dịch chuyển
-    const calcTranslate = () => {
+    function calcTranslate() {
         calc = Math.max(0, Math.min((viTri - 4) * 100, (listCardImg.length - 9) * 100));
         cardIdx.textContent = `${viTri + 1}/52`;
     };
 
     // Dịch chuyển thẻ
-    const cardTranslate = () => {
+    function cardTranslate() {
         [...listCardImg, ...listCardImg1].forEach(val => {
             val.style.translate = `-${calc}%`;
         });
